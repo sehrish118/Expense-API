@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from datetime import UTC, datetime, timedelta
 
 import jwt
@@ -38,3 +40,12 @@ def decode_access_token(token: str) -> dict:
     if payload.get("type") != "access":
         raise jwt.InvalidTokenError("Not an access token")
     return payload
+
+
+# ----------------Portion for refresh token----------------------
+def generate_refresh_token() -> str:
+    return secrets.token_urlsafe(64)
+
+
+def hash_refresh_token(token: str) -> str:
+    return hashlib.sha3_256(token.encode()).hexdigest()
