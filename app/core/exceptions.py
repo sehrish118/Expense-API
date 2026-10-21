@@ -36,6 +36,12 @@ class NotAuthenticatedError(AppError):
     default_message = "Not authenticated"
 
 
+class InvalidRefreshTokenError(AppError):
+    status_code = 401
+    code = "invalid_refresh_token"
+    default_message = "Invalid or expired refresh token"
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def handle_app_error(request: Request, exc: AppError) -> JSONResponse:
