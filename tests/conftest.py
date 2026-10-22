@@ -92,3 +92,19 @@ async def test_user(db_session, credentials):
 def auth_headers(test_user) -> dict:
     token = create_access_token(str(test_user.id))
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+async def admin_user(db_session):
+    user = await UserRepository(db_session).create(
+        "admin@example.com", hash_password("password123")
+    )
+    user.role = "admin"
+    await db_session.commit()
+    return user
+
+
+@pytest.fixture
+def admin_headers(admin_user) -> dict:
+    token = create_access_token(str(admin_user.id))
+    return {"Authorization": f"Bearer {token}"}

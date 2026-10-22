@@ -1,26 +1,28 @@
+import uuid
+from datetime import UTC, datetime, timedelta
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-import uuid
+
+from app.core.config import settings
 from app.core.exceptions import (
     EmailAlreadyRegisteredError,
     InactiveUserError,
     InvalidCredentialsError,
     InvalidRefreshTokenError,
 )
-from datetime import UTC, datetime, timedelta
 from app.core.security import (
     create_access_token,
-    hash_password,
-    verify_password,
     generate_refresh_token,
+    hash_password,
     hash_refresh_token,
+    verify_password,
 )
 from app.models import User
-from app.repositories.user import UserRepository
-from app.schemas.user import UserCreate
 from app.repositories.refresh_token import RefreshTokenRepository
+from app.repositories.user import UserRepository
 from app.schemas.auth import TokenResponse
-from app.core.config import settings
+from app.schemas.user import UserCreate
 
 _DUMMY_HASH = hash_password("dummy-password-for-timing")
 

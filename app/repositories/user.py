@@ -22,3 +22,10 @@ class UserRepository:
         self.session.add(user)
         await self.session.flush()
         return user
+
+    async def get_all(self, limit: int, offset: int) -> list[User]:
+        result = await self.session.execute(
+            select(User).order_by(User.created_at, User.id).limit(limit).offset(offset)
+        )
+
+        return list(result.scalars().all())
