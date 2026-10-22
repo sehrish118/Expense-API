@@ -6,11 +6,12 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import NotAuthenticatedError
+from app.core.exceptions import ForbiddenError, NotAuthenticatedError
 from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models import User
 from app.repositories.user import UserRepository
+from app.services.admin import AdminService
 from app.services.auth import AuthService
 
 # built-in security tool help to extract token from request
@@ -22,6 +23,10 @@ DbSession = Annotated[AsyncSession, Depends(get_db)]
 
 def get_aut_service(db: DbSession) -> AuthService:
     return AuthService(db)
+
+
+def get_admin_service(db: DbSession) -> AdminService:
+    return AdminService(db)
 
 
 async def get_current_user(
@@ -50,3 +55,16 @@ async def get_current_user(
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def require_role(*roles: str):
+    async def checker(current_user: CurrentUser) -> User:
+        if current_user.role not in roles:
+            raise ForbiddenError()
+
+        return current_user
+
+    return checker
+
+
+AdminUser = Annotated[User, Depends(require_role("admin"))]
