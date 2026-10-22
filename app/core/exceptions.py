@@ -42,6 +42,30 @@ class InvalidRefreshTokenError(AppError):
     default_message = "Invalid or expired refresh token"
 
 
+class ForbiddenError(AppError):
+    status_code = 403
+    code = "Forbidden"
+    default_message = "You do not have permission to do this"
+
+
+class UserNotFoundError(AppError):
+    status_code = 404
+    code = "user_not_found"
+    default_message = "User not found"
+
+
+class CannotDeactivateSelfError(AppError):
+    status_code = 400
+    code = "cannot_deactivate_self"
+    default_message = "You cannot deactivate your own account"
+
+
+class CannotactivateSelfError(AppError):
+    status_code = 400
+    code = "cannot_activate_self"
+    default_message = "You cannot activate your own account"
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def handle_app_error(request: Request, exc: AppError) -> JSONResponse:
